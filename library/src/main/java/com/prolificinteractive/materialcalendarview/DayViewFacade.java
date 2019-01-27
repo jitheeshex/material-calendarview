@@ -15,6 +15,7 @@ public class DayViewFacade {
 
   private Drawable backgroundDrawable = null;
   private Drawable selectionDrawable = null;
+  private Drawable fullBackgroundDrawable = null;
   private final LinkedList<Span> spans = new LinkedList<>();
   private boolean daysDisabled = false;
 
@@ -32,6 +33,19 @@ public class DayViewFacade {
       throw new IllegalArgumentException("Cannot be null");
     }
     this.backgroundDrawable = drawable;
+    isDecorated = true;
+  }
+
+  /**
+   * Set a drawable to draw behind everything else
+   *
+   * @param drawable Drawable to draw behind everything
+   */
+  public void setFullBackgroundDrawable(@NonNull Drawable drawable) {
+    if (drawable == null) {
+      throw new IllegalArgumentException("Cannot be null");
+    }
+    this.fullBackgroundDrawable = drawable;
     isDecorated = true;
   }
 
@@ -93,6 +107,9 @@ public class DayViewFacade {
     if (backgroundDrawable != null) {
       other.setBackgroundDrawable(backgroundDrawable);
     }
+    if (fullBackgroundDrawable != null) {
+      other.setFullBackgroundDrawable(fullBackgroundDrawable);
+    }
     other.spans.addAll(spans);
     other.isDecorated |= this.isDecorated;
     other.daysDisabled = daysDisabled;
@@ -108,6 +125,10 @@ public class DayViewFacade {
 
   Drawable getBackgroundDrawable() {
     return backgroundDrawable;
+  }
+
+  Drawable getFullBackgroundDrawable() {
+    return fullBackgroundDrawable;
   }
 
   List<Span> getSpans() {

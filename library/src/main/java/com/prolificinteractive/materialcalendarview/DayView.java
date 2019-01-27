@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -14,6 +15,7 @@ import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatCheckedTextView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -37,6 +39,7 @@ import static com.prolificinteractive.materialcalendarview.MaterialCalendarView.
 
   private final int fadeTime;
   private Drawable customBackground = null;
+  private Drawable fullBackground = null;
   private Drawable selectionDrawable;
   private Drawable mCircleDrawable;
   private DayFormatter formatter = DayFormatter.DEFAULT;
@@ -60,7 +63,6 @@ import static com.prolificinteractive.materialcalendarview.MaterialCalendarView.
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
       setTextAlignment(TEXT_ALIGNMENT_CENTER);
     }
-
     setDay(day);
   }
 
@@ -142,6 +144,18 @@ import static com.prolificinteractive.materialcalendarview.MaterialCalendarView.
     invalidate();
   }
 
+  /**
+   * @param drawable full background to draw behind everything else
+   */
+  public void setFullBackground(Drawable drawable) {
+    if (drawable == null) {
+      this.fullBackground = null;
+    } else {
+      this.fullBackground = drawable.getConstantState().newDrawable(getResources());
+    }
+    invalidate();
+  }
+
   public CalendarDay getDate() {
     return date;
   }
@@ -185,6 +199,7 @@ import static com.prolificinteractive.materialcalendarview.MaterialCalendarView.
     setEnabled();
   }
 
+  private final Rect fullRect = new Rect();
   private final Rect tempRect = new Rect();
   private final Rect circleDrawableRect = new Rect();
 
@@ -194,6 +209,12 @@ import static com.prolificinteractive.materialcalendarview.MaterialCalendarView.
       customBackground.setBounds(tempRect);
       customBackground.setState(getDrawableState());
       customBackground.draw(canvas);
+    }
+
+    if (fullBackground != null) {
+      fullBackground.setBounds(fullRect);
+      fullBackground.setState(getDrawableState());
+      fullBackground.draw(canvas);
     }
 
     mCircleDrawable.setBounds(circleDrawableRect);
@@ -262,6 +283,7 @@ import static com.prolificinteractive.materialcalendarview.MaterialCalendarView.
 
     setCustomBackground(facade.getBackgroundDrawable());
     setSelectionDrawable(facade.getSelectionDrawable());
+    setFullBackground(facade.getFullBackgroundDrawable());
 
     // Facade has spans
     List<DayViewFacade.Span> spans = facade.getSpans();
@@ -294,6 +316,7 @@ import static com.prolificinteractive.materialcalendarview.MaterialCalendarView.
     final int circleOffset =
         Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP ? offset / 2 : offset;
 
+    fullRect.set(0, 0, width, height);
     if (width >= height) {
       tempRect.set(offset, 0, radius + offset, height);
       circleDrawableRect.set(circleOffset, 0, radius + circleOffset, height);
