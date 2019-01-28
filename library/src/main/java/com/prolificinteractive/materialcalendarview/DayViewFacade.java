@@ -90,6 +90,7 @@ public class DayViewFacade {
   void reset() {
     backgroundDrawable = null;
     selectionDrawable = null;
+    fullBackgroundDrawable = null;
     spans.clear();
     isDecorated = false;
     daysDisabled = false;
